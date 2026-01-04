@@ -1,4 +1,4 @@
-# Book API - Docker Deployment
+# Book Manager - Docker Deployment
 
 ## Application Port
 The application listens on **port 8080** by default. This can be changed using the `SERVER_PORT` environment variable.
@@ -39,13 +39,13 @@ docker-compose down -v
 
 ### Build the Docker Image
 ```bash
-docker build -t bookapi:latest .
+docker build -t bookmgr:latest .
 ```
 
 ### Run with Existing MySQL
 ```bash
 docker run -d \
-  --name bookapi-app \
+  --name bookmgr-app \
   -p 8080:8080 \
   -e DATABASE_HOST=mysql-host \
   -e DATABASE_PORT_NUMBER=3306 \
@@ -53,13 +53,13 @@ docker run -d \
   -e DATABASE_USER=bookuser \
   -e DATABASE_PASSWORD=bookpassword \
   -e SKIP_BOOTSTRAP=false \
-  bookapi:latest
+  bookmgr:latest
 ```
 
 ### Run with Custom Port
 ```bash
 docker run -d \
-  --name bookapi-app \
+  --name bookmgr-app \
   -p 9000:9000 \
   -e DATABASE_HOST=mysql-host \
   -e DATABASE_PORT_NUMBER=3306 \
@@ -68,7 +68,7 @@ docker run -d \
   -e DATABASE_PASSWORD=bookpassword \
   -e SERVER_PORT=9000 \
   -e SKIP_BOOTSTRAP=false \
-  bookapi:latest
+  bookmgr:latest
 ```
 
 ## Environment Variables
@@ -86,25 +86,25 @@ docker run -d \
 ## Docker Commands Cheatsheet
 ```bash
 # Build image
-docker build -t bookapi:latest .
+docker build -t bookmgr:latest .
 
 # Run container
-docker run -d -p 8080:8080 --name bookapi bookapi:latest
+docker run -d -p 8080:8080 --name bookmgr bookmgr:latest
 
 # View logs
-docker logs -f bookapi
+docker logs -f bookmgr
 
 # Stop container
-docker stop bookapi
+docker stop bookmgr
 
 # Remove container
-docker rm bookapi
+docker rm bookmgr
 
 # Remove image
-docker rmi bookapi:latest
+docker rmi bookmgr:latest
 
 # Execute shell in container
-docker exec -it bookapi sh
+docker exec -it bookmgr sh
 
 # Using docker-compose
 docker-compose up -d          # Start services
@@ -128,7 +128,7 @@ For production, consider:
 
 1. **Use specific version tags:**
 ```bash
-docker build -t bookapi:1.0.0 .
+docker build -t bookmgr:1.0.0 .
 ```
 
 2. **Enable SKIP_BOOTSTRAP after initial setup:**
@@ -161,20 +161,20 @@ healthcheck:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bookapi
+  name: bookmgr
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: bookapi
+      app: bookmgr
   template:
     metadata:
       labels:
-        app: bookapi
+        app: bookmgr
     spec:
       containers:
-      - name: bookapi
-        image: bookapi:latest
+      - name: bookmgr
+        image: bookmgr:latest
         ports:
         - containerPort: 8080
         env:
@@ -200,10 +200,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: bookapi-service
+  name: bookmgr-service
 spec:
   selector:
-    app: bookapi
+    app: bookmgr
   ports:
   - protocol: TCP
     port: 80

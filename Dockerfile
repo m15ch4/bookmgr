@@ -17,7 +17,7 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bookapi .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bookmgr .
 
 # Runtime stage
 FROM alpine:latest
@@ -32,7 +32,7 @@ RUN addgroup -g 1000 appuser && \
 WORKDIR /app
 
 # Copy the binary from builder
-COPY --from=builder /app/bookapi .
+COPY --from=builder /app/bookmgr .
 
 # Copy static files
 COPY --from=builder /app/static ./static
@@ -47,5 +47,5 @@ USER appuser
 EXPOSE 8080
 
 # Run the application
-CMD ["./bookapi"]
+CMD ["./bookmgr"]
 

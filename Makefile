@@ -2,7 +2,7 @@
 
 # Build the Docker image
 build:
-	docker build -t bookapi:latest .
+	docker build -t bookmgr:latest .
 
 # Run with docker-compose
 run:
@@ -15,7 +15,7 @@ stop:
 # Clean up (remove containers, volumes, and images)
 clean:
 	docker-compose down -v
-	docker rmi bookapi:latest || true
+	docker rmi bookmgr:latest || true
 
 # Rebuild and run
 rebuild: clean build run
@@ -26,9 +26,9 @@ logs:
 
 # Build and run standalone (without MySQL)
 run-standalone:
-	docker build -t bookapi:latest .
+	docker build -t bookmgr:latest .
 	docker run -d \
-		--name bookapi-app \
+		--name bookmgr-app \
 		-p 8080:8080 \
 		-e DATABASE_HOST=your-mysql-host \
 		-e DATABASE_PORT_NUMBER=3306 \
@@ -36,9 +36,9 @@ run-standalone:
 		-e DATABASE_USER=root \
 		-e DATABASE_PASSWORD=yourpassword \
 		-e SKIP_BOOTSTRAP=false \
-		bookapi:latest
+		bookmgr:latest
 
 # Stop standalone
 stop-standalone:
-	docker stop bookapi-app
-	docker rm bookapi-app
+	docker stop bookmgr-app
+	docker rm bookmgr-app
