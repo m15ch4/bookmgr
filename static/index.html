@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .books-section {
+            margin-top: 20px;
+        }
+
+        .books-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .book-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .book-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .book-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .book-author {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .book-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .book-detail {
+            text-align: center;
+        }
+
+        .book-detail-label {
+            font-size: 0.8em;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        .book-detail-value {
+            font-weight: 600;
+            color: #333;
+            margin-top: 3px;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            flex: 1;
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #218838;
+        }
+
+        .btn-delete {
+            flex: 1;
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .rating {
+            color: #ffc107;
+            font-weight: 700;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Book Manager</h1>
+            <p>Manage your book collection</p>
+        </header>
+
+        <div class="content">
+            <div id="message"></div>
+
+            <div class="form-section">
+                <h2 id="form-title">Add New Book</h2>
+                <form id="bookForm">
+                    <input type="hidden" id="bookId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="title">Title *</label>
+                            <input type="text" id="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="author">Author *</label>
+                            <input type="text" id="author" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numPages">Number of Pages</label>
+                            <input type="number" id="numPages" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Rating (0-5)</label>
+                            <input type="number" id="rating" min="0" max="5" step="0.1" value="0">
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn-primary" id="submitBtn">Add Book</button>
+                        <button type="button" class="btn-secondary" id="cancelBtn" style="display:none;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="books-section">
+                <h2>Book Collection</h2>
+                <div id="booksList" class="books-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/books';
+        let editingId = null;
+
+        // Load books on page load
+        document.addEventListener('DOMContentLoaded', loadBooks);
+
+        // Form submission
+        document.getElementById('bookForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const book = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                numPages: parseInt(document.getElementById('numPages').value) || 0,
+                rating: parseFloat(document.getElementById('rating').value) || 0
+            };
+
+            try {
+                if (editingId) {
+                    await updateBook(editingId, book);
+                } else {
+                    await createBook(book);
+                }
+                resetForm();
+                loadBooks();
+            } catch (error) {
+                showMessage('Operation failed: ' + error.message, 'error');
+            }
+        });
+
+        // Cancel edit
+        document.getElementById('cancelBtn').addEventListener('click', resetForm);
+
+        async function loadBooks() {
+            try {
+                const response = await fetch(API_URL);
+                const books = await response.json();
+                displayBooks(books);
+            } catch (error) {
+                showMessage('Failed to load books', 'error');
+            }
+        }
+
+        async function createBook(book) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(book)
+            });
+            
+            if (!response.ok) throw new Error('Failed to create book');
+            showMessage('Book added successfully!', 'success');
+        }
+
+        async function updateBook(id, book) {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(book)
+            });
+            
+            if (!response.ok) throw new Error('Failed to update book');
+            showMessage('Book updated successfully!', 'success');
+        }
+
+        async function deleteBook(id) {
+            if (!confirm('Are you sure you want to delete this book?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) throw new Error('Failed to delete book');
+                showMessage('Book deleted successfully!', 'success');
+                loadBooks();
+            } catch (error) {
+                showMessage('Failed to delete book', 'error');
+            }
+        }
+
+        function editBook(book) {
+            editingId = book.id;
+            document.getElementById('title').value = book.title;
+            document.getElementById('author').value = book.author;
+            document.getElementById('numPages').value = book.numPages;
+            document.getElementById('rating').value = book.rating;
+            document.getElementById('form-title').textContent = 'Edit Book';
+            document.getElementById('submitBtn').textContent = 'Update Book';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            editingId = null;
+            document.getElementById('bookForm').reset();
+            document.getElementById('form-title').textContent = 'Add New Book';
+            document.getElementById('submitBtn').textContent = 'Add Book';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        function displayBooks(books) {
+            const container = document.getElementById('booksList');
+            
+            if (!books || books.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📖</div>
+                        <h3>No books yet</h3>
+                        <p>Add your first book using the form above</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = books.map(book => `
+                <div class="book-card">
+                    <div class="book-title">${escapeHtml(book.title)}</div>
+                    <div class="book-author">by ${escapeHtml(book.author)}</div>
+                    <div class="book-details">
+                        <div class="book-detail">
+                            <div class="book-detail-label">Pages</div>
+                            <div class="book-detail-value">${book.numPages}</div>
+                        </div>
+                        <div class="book-detail">
+                            <div class="book-detail-label">Rating</div>
+                            <div class="book-detail-value rating">⭐ ${book.rating.toFixed(1)}</div>
+                        </div>
+                    </div>
+                    <div class="book-actions">
+                        <button class="btn-edit" onclick='editBook(${JSON.stringify(book)})'>Edit</button>
+                        <button class="btn-delete" onclick="deleteBook(${book.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

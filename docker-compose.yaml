@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: bookapi-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bookdb
+      MYSQL_USER: bookuser
+      MYSQL_PASSWORD: bookpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bookapi-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bookapi-app
+    environment:
+      DATABASE_HOST: mysql
+      DATABASE_PORT_NUMBER: 3306
+      DATABASE_NAME: bookdb
+      DATABASE_USER: bookuser
+      DATABASE_PASSWORD: bookpassword
+      SKIP_BOOTSTRAP: "false"
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bookapi-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  bookapi-network:
+    driver: bridge
